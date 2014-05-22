@@ -1,4 +1,4 @@
-#include "Socket.h"//Esto va entre comillas porque está en la misma carpeta que el .c (o algo así)
+#include "socket.h"//Esto va entre comillas porque está en la misma carpeta que el .c (o algo así)
 /*funciones de lectura/escritura sockets*/
 
 #define size_header  sizeof(uint16_t) * 2
@@ -79,7 +79,59 @@ void setListFunctions(basic_functions someBasic)
 {
 	basic = someBasic;
 	setListPacketFunctions(someBasic);
+	if (test())
+	{
+		perror("Error en el test de las funciones de listas");
+	}
 }
+
+int test()
+{
+	printf("Inicializando lista \n");
+	void* aList = basic.instantiate_list_function();
+
+	if(!basic.list_is_empty(aList))
+	{
+		printf("Error, se esperaba que la lista este vacia\n");
+		return 1;
+	}
+
+	printf("Creando paquete\n");
+	char a= 'a';
+	t_paquete unPaquete = armarPaquete(1,sizeof(char),&a);
+
+	printf("Agregando paquete a la lista \n");
+	basic.add_element_function(&unPaquete, aList);
+
+	if(basic.list_is_empty(aList))
+	{
+		printf("Error al agregar elemento \n");
+		return 1;
+	}
+
+	printf("Removiendo el primer elemento de la lista\n");
+	unPaquete = *(t_paquete*)basic.remove_first(aList);
+	if(!basic.list_is_empty(aList))
+	{
+		printf("Se esperaba que la lista este vacia \n");
+		return 1;
+	}
+	else if(*unPaquete.datos != 'a' )
+	{
+		printf("Error de integridad de datos, el paquet eno es el mismo\n");
+		return 1;
+	}
+
+	if(basic.size_of_list(aList)!=0)
+	{
+		printf("Error en el calculo del tamanio de la lista \n");
+		return 1;
+	}
+	//TODO: agregar multiples elementos y removerlos todos
+
+	return 0;
+}
+
 
 int Escribe_Socket_deprecated (int fd, char* Datos, int Longitud)
 {

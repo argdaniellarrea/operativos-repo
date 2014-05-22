@@ -35,5 +35,6 @@ void* recibir(int fd);
 int enviar(int codOp, int tamanioDatos, char* datos, int fd );
 int conectar(char* direccion, char* puerto);
 int crear_socket_escucha(char* direccion, char* puerto);
+int test();
 
 #endif /* SOCKET_H_ */

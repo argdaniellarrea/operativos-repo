@@ -8,16 +8,27 @@
 #ifndef PAQUETE_H_
 #define PAQUETE_H_
 
+#include <stdlib.h>
+#include <netinet/in.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <arpa/inet.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdbool.h>
+
 typedef struct
 {
-	void* (*add_element_function) (void*, void*);
-	void* (*remove_element_function) (void*);
-	void* (*instantiate_list_function) (void);
-	void (*destroy_and_clean_list) (void*);
-	void (*element_destroyer) (void*);
-	void (*list_is_empty) (void*);
-	void (*remove_first) (void*); // por si las moscas
-	void (*size_of_list) (void*);
+	void* (*add_element_function) (void*, void*); 	//tested
+	void* (*get_element_function) (void*,int);		//notTested
+	void* (*instantiate_list_function) (void);		//tested
+	void (*destroy_and_clean_list) (void*);			//notTested
+	void (*element_destroyer) (void*);				//notTested
+	bool (*list_is_empty) (void*);					//tested
+	void* (*remove_first) (void*);					//tested
+	int (*size_of_list) (void*);					//tested
 }basic_functions;
 
 typedef struct
