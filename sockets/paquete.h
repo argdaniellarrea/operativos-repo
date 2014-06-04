@@ -27,7 +27,7 @@ typedef struct
 	void (*destroy_and_clean_list) (void*);			//notTested
 	void (*element_destroyer) (void*);				//notTested
 	bool (*list_is_empty) (void*);					//tested
-	void* (*remove_first) (void*);					//tested
+	void* (*remove_element) (void*, int);			//tested
 	int (*size_of_list) (void*);					//tested
 }basic_functions;
 

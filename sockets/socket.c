@@ -101,7 +101,7 @@ int test()
 	t_paquete unPaquete = armarPaquete(1,sizeof(char),&a);
 
 	printf("Agregando paquete a la lista \n");
-	basic.add_element_function(&unPaquete, aList);
+	basic.add_element_function(aList, &unPaquete);
 
 	if(basic.list_is_empty(aList))
 	{
@@ -110,7 +110,7 @@ int test()
 	}
 
 	printf("Removiendo el primer elemento de la lista\n");
-	unPaquete = *(t_paquete*)basic.remove_first(aList);
+	unPaquete = *(t_paquete*)basic.remove_element(aList,0);
 	if(!basic.list_is_empty(aList))
 	{
 		printf("Se esperaba que la lista este vacia \n");
@@ -233,7 +233,7 @@ int conectar(char* direccion, char* puerto){
 		return socketEmisor;/*tiene que devolver una estr*/
 }
 
-int crear_socket_escucha(char* direccion, char* puerto)
+int crear_socket_escucha(char* puerto)
 {
 	int socketEscucha;
 	struct sockaddr_in socketInfo;

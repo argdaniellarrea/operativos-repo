@@ -34,7 +34,8 @@ int Escribe_Socket (int fd, char* Datos, int Longitud);
 void* recibir(int fd);
 int enviar(int codOp, int tamanioDatos, char* datos, int fd );
 int conectar(char* direccion, char* puerto);
-int crear_socket_escucha(char* direccion, char* puerto);
+int crear_socket_escucha( char* puerto);
 int test();
+void setListFunctions(basic_functions someBasic);
 
 #endif /* SOCKET_H_ */
