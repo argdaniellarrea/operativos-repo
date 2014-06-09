@@ -26,6 +26,18 @@
 #include <sys/unistd.h>
 #include "paquete.h"
 
+#define SUCCESS 0
+#define PACKET_RECEIVED_ERROR 1
+#define SOCKET_CLOSED 2
+
+typedef struct
+{
+	int operationResult;
+	int socketStatus;
+	void* packetDataStruct;
+
+}t_socketStruct;
+
 
 
 // Poner los prototipos de las funciones aca, me permite que otro proyecto las use:
@@ -36,6 +48,9 @@ int enviar(int codOp, int tamanioDatos, char* datos, int fd );
 int conectar(char* direccion, char* puerto);
 int crear_socket_escucha( char* puerto);
 int test();
+int aceptar(int socketEscucha);
 void setListFunctions(basic_functions someBasic);
+
+
 
 #endif /* SOCKET_H_ */

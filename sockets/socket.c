@@ -166,42 +166,47 @@ void* recibir(int fd)
 	void * packetList = basic.instantiate_list_function();
 	char* buffer = malloc (sizeof(char)*256);
 	char* bufferPivot = buffer;
-	int a= recv(fd,buffer, sizeof(buffer),0);
+	int a= recv(fd,buffer, 256,0);
+	if(a<0)
+	{
+		return (void*)-1;
+	}
+
+	int desacopladorResult=desacoplador(buffer,a,packetList);
+
+	while(desacopladorResult>0)
+	{
+		char* aux= bufferPivot;
+		bufferPivot = malloc(sizeof(char)*256 + desacopladorResult);
+		memcpy(bufferPivot, aux+ errno, sizeof(aux)- desacopladorResult);
+		a = recv(fd, bufferPivot + (sizeof(aux)- errno), sizeof(bufferPivot) - (sizeof(aux)- errno),0 );
+		desacopladorResult = desacoplador(bufferPivot, a,packetList);
+		free(aux);
+
+	}
+
+	if(desacopladorResult == 0)
+	{
+
+		return packetList;
+	}
+
+	//destruirLista
+	return NULL;
+
 	//analizar que paso con el recv
-	if(a>0)
-	{
-		//todo: sobrecarga de buffer
-		int errorNumber= desacoplador(bufferPivot, a, packetList);
-		while(errorNumber != 0&& a >0)
-		{
-			char* aux= bufferPivot;
-			bufferPivot = malloc(sizeof(char)*256 + errno);
-			memcpy(bufferPivot, aux+ errno, sizeof(aux)- errno);
-			a = recv(fd, bufferPivot + (sizeof(aux)- errno), sizeof(bufferPivot) - (sizeof(aux)- errno),0 );
-			errorNumber = desacoplador(bufferPivot, a,packetList);
-			free(aux);
-		}
-	}
-
-	if(a==0)
-	{
-	//	destruir(packetList);//TODO
-		return NULL; //el proceso que use esto, deberia tomar las acciones necesarias para desconectarse del otro proceso (avisar, limpiar listas, etc)
-
-	}
-	else
-	{
-		//error
-		return (void*)1;
-	}
-	return packetList;
-
 }
+
+
+//todo: refactorizar esto
+
 
 int enviar(int codOp, int tamanioDatos, char* datos, int fd )
 {
 	t_paquete paqueteAEnviar = armarPaquete(codOp, tamanioDatos, datos);
 	char* bloque = acoplador(&paqueteAEnviar);
+	printf("size_header %d\n", size_header);
+	printf("tamanioDelPaquete %d \n",tamanioDePaquete(paqueteAEnviar));
 	int a = send(fd, bloque,tamanioDePaquete(paqueteAEnviar),0);
 	free(bloque);
 
@@ -268,4 +273,16 @@ int crear_socket_escucha(char* puerto)
 	}
 
 	return socketEscucha;
+}
+
+int aceptar(int socketEscucha)
+{
+	int socketNuevo;
+	struct sockaddr_in socket;
+	socklen_t len = sizeof(socket);
+	if((socketNuevo=accept(socketEscucha,(struct sockaddr*)&socket,&len ))<=0)
+	{
+		return -1;
+	}
+	return socketNuevo;
 }

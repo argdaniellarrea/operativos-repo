@@ -33,6 +33,10 @@ char* acoplador(t_paquete* paquete) /*transforma una estructura de tipo t_paquet
 
 int desacoplador(char* buffer,int sizeBuffer, void* packetList)/*transforma multiples streams en estructuras de t_paquete y los agrega a una lista*/
 {
+	if(sizeBuffer==0)
+	{
+		return -1;
+	}
 	int desacoplado = 0;
 	t_paquete* paquete;
 	while (sizeBuffer!= desacoplado)
@@ -43,7 +47,7 @@ int desacoplador(char* buffer,int sizeBuffer, void* packetList)/*transforma mult
 			paquete= malloc(sizeof(t_paquete));
 			paquete->codOp= (uint16_t)*(buffer + desacoplado);
 			paquete->tamanioDatos= (uint16_t)* (buffer + sizeof(uint16_t) + desacoplado);
-			if(sizeBuffer- desacoplado - size_header > paquete->tamanioDatos)
+			if(sizeBuffer- desacoplado - size_header >= paquete->tamanioDatos)
 			{
 				paquete->datos= malloc(paquete->tamanioDatos);
 				memcpy(paquete->datos, buffer + desacoplado + size_header, paquete->tamanioDatos);
@@ -66,13 +70,13 @@ int desacoplador(char* buffer,int sizeBuffer, void* packetList)/*transforma mult
 
 int tamanioDePaquete(t_paquete unPaquete)
 {
-	return unPaquete.tamanioDatos + size_header;
+	return (unPaquete.tamanioDatos + size_header);
 }
 
 t_paquete armarPaquete(int codOp, int tamanioDatos, char* datos)
 {
 	t_paquete unPaquete;
-	unPaquete.codOp = codOp;
+	unPaquete.codOp =  codOp;
 	unPaquete.tamanioDatos = tamanioDatos;
 	unPaquete.datos = datos;
 	return unPaquete;
