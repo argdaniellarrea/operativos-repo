@@ -10,7 +10,7 @@ int Lee_Socket_deprecated (int fd, char*Datos, int Longitud)
 {
 	int Leido = 0;
 	int Aux = 0;
-	char buffer[256];
+	char buffer[10240];
 
 	/* comprueba qe los parametros sean correctos */
 

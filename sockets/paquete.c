@@ -31,39 +31,21 @@ char* acoplador(t_paquete* paquete) /*transforma una estructura de tipo t_paquet
 	return paqueteSalida;
 }
 
-int desacoplador(char* buffer,int sizeBuffer, void* packetList)/*transforma multiples streams en estructuras de t_paquete y los agrega a una lista*/
+int desacoplador(char* buffer,int sizeBuffer, void* paquetes)/*transforma multiples streams en estructuras de t_paquete y los agrega a una lista*/
 {
-	if(sizeBuffer==0)
-	{
-		return -1;
-	}
 	int desacoplado = 0;
 	t_paquete* paquete;
 	while (sizeBuffer!= desacoplado)
-	{//todo: ojo con malloc, analizar como funciona sobrecarga de buffer
+	{
+		paquete = (t_paquete*)malloc(sizeof(t_paquete));
+		paquete->codOp= (uint16_t)*(buffer + desacoplado);
+		paquete->tamanioDatos= (uint16_t)* (buffer + sizeof(uint16_t) + desacoplado);
+		paquete->datos=  (char*)malloc(paquete->tamanioDatos);
+		memcpy(paquete->datos, buffer + desacoplado + size_header, paquete->tamanioDatos);
+		basic.add_element_function(paquetes, paquete);
 
-		if((sizeBuffer - desacoplado)>= size_header)
-		{
-			paquete= malloc(sizeof(t_paquete));
-			paquete->codOp= (uint16_t)*(buffer + desacoplado);
-			paquete->tamanioDatos= (uint16_t)* (buffer + sizeof(uint16_t) + desacoplado);
-			if(sizeBuffer- desacoplado - size_header >= paquete->tamanioDatos)
-			{
-				paquete->datos= malloc(paquete->tamanioDatos);
-				memcpy(paquete->datos, buffer + desacoplado + size_header, paquete->tamanioDatos);
-				basic.add_element_function(packetList, (void*)paquete);
-				desacoplado += (size_header + paquete->tamanioDatos);
-			}
-			else
-			{
-				free(paquete);
-				return desacoplado;
-			}
-		}
-		else
-		{
-			return desacoplado;
-		}
+
+		desacoplado += (size_header + paquete->tamanioDatos);
 	}
 	return 0;
 }
